@@ -20,11 +20,12 @@ def file_iter(_type):
         for name in d_list:
             with open(doc_path+name+'.txt') as f:
                 yield f.readline()
-
+#%%
 B = 0.75
-K1 = 1.2
+K1 = 4
 K3 = 1000
 
+#%%
 timestamp()
 doc_path = "../HW1 Vector Space Model/data/docs/"
 query_path = "../HW1 Vector Space Model/data/queries/"
@@ -57,30 +58,44 @@ df_q_tf = pd.DataFrame(list_tf)
 df_q_tf = df_q_tf.fillna(0)
 np_q_tf = np.array(df_q_tf)
 voc = list(df_q_tf.columns)
+# df_q_tf
 
+#%%
 doc_len = []
-np_d_tf = np.empty([len(d_list), np_q_tf.shape[1]])
+np_d_tf = np.zeros([len(d_list), len(voc)])
 for i, doc in tqdm(enumerate(doc_list)):
     doc_len += [len(doc)]
-    for j, w in enumerate(df_q_tf.columns):
+    for j, w in enumerate(voc):
         np_d_tf[i][j] += doc.count(w)
 del df_q_tf
 doc_avg_len = np.array(doc_len).mean()
+np_d_tf
 
+#%%
 # df
 np_df = np.count_nonzero(np_d_tf, axis=0) #n_i
+np_df
 
 #%%
 # sim_array
-sim_array = np.empty([len(q_list), len(d_list)])
+sim_array = np.zeros([len(q_list), len(d_list)])
 for q in tqdm(range(len(q_list))):
     for d in range(len(d_list)):
         for w in query_list[q].split():
             i = voc.index(w)
             d_tf = (K1+1)*np_d_tf[d][i] / (K1*((1-B) + B*doc_len[d]/doc_avg_len) + np_d_tf[d][i]) #####
-            q_tf = (K3+1)*np_q_tf[q][i] / (K3+np_q_tf[q][i])  ###
-            idf = np.log((len(d_list)-np_df[i]+0.5) / (np_df[i]+0.5))
-            sim_array[q][d] += d_tf * q_tf * idf
+            # q_tf = (K3+1)*np_q_tf[q][i] / (K3+np_q_tf[q][i])  ###
+            idf = np.log(1+(len(d_list)-np_df[i]+0.5) / (np_df[i]+0.5))
+            sim_array[q][d] += d_tf * np.power(idf, 2)
+sim_array
+
+#%%
+from rank_bm25 import BM25Okapi
+tokenized_corpus = [doc.split(" ") for doc in doc_list]
+
+bm25 = BM25Okapi(tokenized_corpus, k1=4)
+sim_array = [bm25.get_scores(tokenized_query.split()) for tokenized_query in query_list]
+# sim_array
 
 #%%
 # output
