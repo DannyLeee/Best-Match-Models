@@ -17,8 +17,8 @@ optional arguments:
 ## Approach
 * IDF different from original formula
     * Square IDF make it more important
-    * <img src="https://latex.codecogs.com/gif.latex?IDF = (ln(1 + \frac{N+0.5}{n_i+0.5}))^2"/>
-* <img src="https://latex.codecogs.com/gif.latex?b = 0.75"/>
-* <img src="https://latex.codecogs.com/gif.latex?K_1 = 3.5"/>
+    * <img src="https://latex.codecogs.com/gif.latex?IDF&space;=&space;(ln(1&space;&plus;&space;\frac{N&plus;0.5}{n_i&plus;0.5}))^2"/>
+* <img src="https://latex.codecogs.com/gif.latex?b=0.75"/>
+* <img src="https://latex.codecogs.com/gif.latex?K_1=3.5"/>
 * not use query's TF term that in formula (having <img src="https://latex.codecogs.com/gif.latex?K_3"/>'s term), i.e.
     * <img src="https://latex.codecogs.com/gif.latex?\frac{(K_3&plus;1)\times&space;tf_{i,q}}{K_3\times&space;tf_{i,q}}=1" />
