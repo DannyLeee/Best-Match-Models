@@ -21,4 +21,4 @@ optional arguments:
 * <img src="https://latex.codecogs.com/gif.latex?b = 0.75"/>
 * <img src="https://latex.codecogs.com/gif.latex?K_1 = 3.5"/>
 * not use query's TF term that in formula (having <img src="https://latex.codecogs.com/gif.latex?K_3"/>'s term), i.e.
-    * <img src="https://latex.codecogs.com/gif.latex?\frac{(K_3+1) \times tf_{i,q}}{K_3 \times tf_{i,q}} = 1"/>
+    * <img src="https://latex.codecogs.com/gif.latex?\frac{(K_3&plus;1)\times&space;tf_{i,q}}{K_3\times&space;tf_{i,q}}=1" />
