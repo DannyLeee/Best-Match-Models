@@ -1,10 +1,9 @@
 #%%
-from sklearn.metrics.pairwise import cosine_similarity
-import pandas as pd
 import numpy as np
 from collections import Counter
 from tqdm import tqdm
 from datetime import datetime,timezone,timedelta
+from functools import reduce
 
 def timestamp():
     dt1 = datetime.utcnow().replace(tzinfo=timezone.utc)
@@ -43,22 +42,22 @@ with open('../HW1 Vector Space Model/data/query_list.txt', 'r') as q_list_file:
         q_list += [line]
 #%%
 #tf
-list_tf = []
+list_q_tf = []
+list_d_tf = []
 doc_list = []
 query_list = []
 for txt in tqdm(file_iter("q")):
-    list_tf += [Counter(txt.split())]
+    list_q_tf += [Counter(txt.split())]
     query_list += [txt]
 
 for txt in tqdm(file_iter("d")):
+    list_d_tf += [Counter(txt.split())]
     doc_list += [txt]
 
 #%%
-df_q_tf = pd.DataFrame(list_tf)
-df_q_tf = df_q_tf.fillna(0)
-np_q_tf = np.array(df_q_tf)
-voc = list(df_q_tf.columns)
-# df_q_tf
+voc = reduce(set.union, map(set, map(dict.keys, list_q_tf)))
+voc = list(voc)
+
 
 #%%
 doc_len = []
@@ -66,10 +65,11 @@ np_d_tf = np.zeros([len(d_list), len(voc)])
 for i, doc in tqdm(enumerate(doc_list)):
     doc_len += [len(doc)]
     for j, w in enumerate(voc):
-        np_d_tf[i][j] += doc.count(w)
-del df_q_tf
+        np_d_tf[i][j] += list_d_tf[i][w]
+# del df_q_tf
 doc_avg_len = np.array(doc_len).mean()
 np_d_tf
+
 
 #%%
 # df
@@ -88,14 +88,6 @@ for q in tqdm(range(len(q_list))):
             idf = np.log(1+(len(d_list)-np_df[i]+0.5) / (np_df[i]+0.5))
             sim_array[q][d] += d_tf * np.power(idf, 2)
 sim_array
-
-#%%
-from rank_bm25 import BM25Okapi
-tokenized_corpus = [doc.split(" ") for doc in doc_list]
-
-bm25 = BM25Okapi(tokenized_corpus, k1=4)
-sim_array = [bm25.get_scores(tokenized_query.split()) for tokenized_query in query_list]
-# sim_array
 
 #%%
 # output
